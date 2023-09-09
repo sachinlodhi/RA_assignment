@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Other Page</title>
+</head>
+<body>
+    <form method="POST" action="/process_selected">
+        {% for word in content %}
+            <label>
+                <input type="checkbox" name="selected_words" value="{{ word }}">
+                {{ word }}
+            </label><br>
+        {% endfor %}
+        <button type="submit">Remove Selected Words</button>
+    </form>
+
+
+<form method="POST" action="/start_mapping">
+        <button type="submit">Start Mapping</button>
+    </form>
+
+    <form method="POST" action="/start_visualizing">
+        <button type="submit">Start Visualizing</button>
+    </form>
+</body>
+</html>
