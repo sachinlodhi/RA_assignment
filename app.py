@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,flash, redirect, url_for,send_from_directory, session
+from flask import Flask, render_template, request,flash, redirect, url_for,send_from_directory, session, send_file
 from werkzeug.utils import secure_filename
 from utils import utility
 import os
@@ -49,7 +49,6 @@ def upload_file():
             session["file_path"] = "./"+UPLOAD_DIR+"/"+filename
             # print(type(col_lis))
             # print(col_lis)
-
             return redirect(url_for("show_file_content"))
             # return redirect(url_for('download_file', name=filename))
     return render_template('upload.html')
@@ -59,37 +58,33 @@ def upload_file():
 def show_file_content():
     col_list = session.get('col_list', [])# extracting the data from session variable
     print(f"stored path is : {session.get('file_path')}")
-
-    return render_template('file_content.html', content=col_list)
-
-
-@app.route('/process_selected', methods=['POST'])
-def process_selected():
-    # Get the list of selected words from the form
-    cols_to_remove = request.form.getlist('selected_words') # get from the page for the cols to remove
-    all_cols = session.get('col_list', []) # get list of all the cols in the uploaded file
-    session["col_list"] = utility.filter_cols(all_cols, cols_to_remove) # session to store selected cols for the process
-    # Do something with the selected words (e.g., print them)
-    print("Selected words:", session.get('col_list', []))
-
     # start mapping
     utility.mapping(session.get('file_path'))
+    return render_template('file_content.html', content=col_list)
 
-
+# function for generating the mapped file
+@app.route('/start_mapping', methods=['POST'])
+def process_selected():
+    # receiving the list of selected words from the form
+    cols_to_remove = request.form.getlist('selected_words') # getting from the page for the column to remove
+    all_cols = session.get('col_list', []) # getting list of all the cols in the uploaded file
+    session["col_list"] = utility.filter_cols(all_cols, cols_to_remove) # session to store selected cols for the process
     return  redirect(url_for("show_file_content"))
 
-
+@app.route("/download_mapping",methods=['POST'])
+def download_file():
+    file_path = session.get('file_path')
+    _, file_extension = os.path.splitext(file_path)
+    file_path= _ +"_mapping" + file_extension
+    print(file_path)
+    return send_file(file_path, as_attachment=True, download_name=file_path)
 @app.route('/start_visualizing', methods=['POST'])
 def visualize():
     print(f"Session path visualizartion : {session.get('file_path')}")
     image_urls = utility.graphs(session.get("file_path"))
-    print(image_urls)
-    return render_template('display_graphs.html', image_urls=image_urls)
-
-
-
-
-
+    return render_template("links.html")
+    # print(image_urls[0])
+    # return render_template('display_graphs.html', image_urls=image_urls[0])
 
 
 if __name__ == '__main__':

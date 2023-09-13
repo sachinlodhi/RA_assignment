@@ -72,7 +72,11 @@ def mapping(filename):
 
 # plotting the graphs
 def graphs(file_path):
-    os.makedirs("static/graphs/"+"frequency_graphs")
+    try:
+        os.makedirs("static/graphs/"+"frequency_graphs")
+        os.makedirs("static/graphs/" + "scatter_graphs")
+    except:
+        pass
     save_dir = "static/graphs"
     '''Plotting frequency graph for the dataframe and dsiplaying image'''
     df = read_func[file_path[-4:]](file_path)
@@ -82,33 +86,41 @@ def graphs(file_path):
     num_cols = 5
 
     # Frequency graphs
-    fig, axes = plt.subplots(num_rows, num_cols, figsize=(30, 30))
-    axes = axes.flatten()
     for i in attributes_to_plot:
         frequency_counts = df[i].value_counts().sort_index()
         plt.figure(figsize=(10, 6))  # Set the figure size
-        frequency_counts.plot(kind='bar', color='skyblue')  # Use 'bar' for a bar graph
+        frequency_counts.plot(kind='bar', color='skyblue')
         plt.xlabel('Unique Values')  # X-axis label
         plt.ylabel('Frequency')  # Y-axis label
-        plt.title(f'Frequency Distribution of {i}')  # Title of the graph
-        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability if needed
-        plt.grid(axis='y')  # Add grid lines along the y-axis
+        plt.title(f'Frequency Distribution of {i}')
+        plt.xticks(rotation=45)
+        plt.grid(axis='y')
         # plt.show()  # Show the plot
-        plt.savefig(save_dir+'/' +i+".png")
-
-    img_lis_freq = glob.glob(save_dir+"/*.png")
+        plt.savefig(save_dir+'/frequency_graphs/' +i+".png")
+    print("Freq distr saved")
+    freq_lis = glob.glob(save_dir+"/frequency_graphs/" + "*.png")
 
     # # scatter plot
-    # plt.figure (figsize=(8, 6))
-    # plt.scatter(df["GPA"],df["Grade"])
-    # plt.xlabel ("GPA")
-    # plt.ylabel ("Grade")
-    # plt.title ("GPA vs. Grade")
-    # plt.grid(True)
-    # plt.show()
+    # Create a list to store the scatter plots
+    scatter_plots = []
 
+    # Loop through each attribute and create scatter plots
+    for i, attribute in enumerate(attributes_to_plot):
+        row = i // num_cols
+        col = i % num_cols
+        plt.figure(figsize=(10, 8))  # Set the figure size
+        sns.scatterplot(x=attribute, y='Grade', data=df)
+        plt.xlabel(attribute)
+        plt.ylabel('Grade')
+        plt.title(f'{attribute} vs. Grade')
+        plt.xticks(rotation=45)  # Rotate x-axis labels if needed
+        # Append the current plot to the list of scatter plots
+        scatter_plots.append(plt)
+        plt.savefig(save_dir + '/scatter_graphs/' + attribute + ".png")
 
-    return img_lis_freq
+    scatter_lis = glob.glob(save_dir + "/scatter_graph/" + "*.png")
+
+    return [freq_lis, scatter_lis]
 
 
 
