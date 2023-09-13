@@ -12,6 +12,9 @@ import warnings
 import math
 import shutil
 import glob
+from .cleaner import clean
+from .transform import cat_df, fix_missing, encode, impute
+from .graph import corr_mat_cat, corr_mat_ord, scatter_plt, freq_graph
 
 warnings.filterwarnings('ignore')
 
@@ -38,7 +41,7 @@ def filter_personal(attributes):
     filtered_list = [word for word in l if pattern.search(word)]
 
     # Print the filtered list
-    print(filtered_list)
+    # print(filtered_list)
 
 
 # this function removes the columns baesd on the user selection
@@ -60,7 +63,6 @@ def mapping(filename):
         unique_digits.add(random.randint(10000, 99999))
         if len(unique_digits) == main_df_len:
             break
-
     map_df = pd.DataFrame()
     map_df["Sr. No."] = df["Sr. No."]
     map_df["uid"] = list(unique_digits)
@@ -68,59 +70,54 @@ def mapping(filename):
     map_df.to_csv(_ +"_mapping.csv",index=False)
     print("Success Mapping")
 
-
-
-# plotting the graphs
-def graphs(file_path):
-    try:
-        os.makedirs("static/graphs/"+"frequency_graphs")
-        os.makedirs("static/graphs/" + "scatter_graphs")
-    except:
-        pass
-    save_dir = "static/graphs"
-    '''Plotting frequency graph for the dataframe and dsiplaying image'''
-    df = read_func[file_path[-4:]](file_path)
-    attributes_to_plot = list(df.columns.values)
-    print(len(attributes_to_plot))
-    num_rows = math.ceil(len(attributes_to_plot) / 5)
-    num_cols = 5
-
-    # Frequency graphs
-    for i in attributes_to_plot:
-        frequency_counts = df[i].value_counts().sort_index()
-        plt.figure(figsize=(10, 6))  # Set the figure size
-        frequency_counts.plot(kind='bar', color='skyblue')
-        plt.xlabel('Unique Values')  # X-axis label
-        plt.ylabel('Frequency')  # Y-axis label
-        plt.title(f'Frequency Distribution of {i}')
-        plt.xticks(rotation=45)
-        plt.grid(axis='y')
-        # plt.show()  # Show the plot
-        plt.savefig(save_dir+'/frequency_graphs/' +i+".png")
-    print("Freq distr saved")
-    freq_lis = glob.glob(save_dir+"/frequency_graphs/" + "*.png")
-
-    # # scatter plot
-    # Create a list to store the scatter plots
+# loading  the df and starting further process
+def begin(filename):
+    # read csv file here
+    global read_func
+    freq_graphs =[]
     scatter_plots = []
+    ord_corr_mat = []
+    cat_corr_mat = []
+    rec = read_func[filename[-4:]](filename) # read the file according to its extension
+    rec1 = rec.copy()
+    # print(rec.head())
 
-    # Loop through each attribute and create scatter plots
-    for i, attribute in enumerate(attributes_to_plot):
-        row = i // num_cols
-        col = i % num_cols
-        plt.figure(figsize=(10, 8))  # Set the figure size
-        sns.scatterplot(x=attribute, y='Grade', data=df)
-        plt.xlabel(attribute)
-        plt.ylabel('Grade')
-        plt.title(f'{attribute} vs. Grade')
-        plt.xticks(rotation=45)  # Rotate x-axis labels if needed
-        # Append the current plot to the list of scatter plots
-        scatter_plots.append(plt)
-        plt.savefig(save_dir + '/scatter_graphs/' + attribute + ".png")
+    # 1. returns the column with the removed attrs
+    rec = clean(rec)
+    print("Attrs removed")
+    # 2. send the rec for imputation
+    rec = fix_missing(rec)
+    print("Impuatation Done")
 
-    scatter_lis = glob.glob(save_dir + "/scatter_graph/" + "*.png")
+    # 3. draw freq graph for the EDA
+    freq_graphs = freq_graph(rec)
+    print('Frequency graph done')
 
-    return [freq_lis, scatter_lis]
+    #4. draw scatter plot
+    scatter_graphs = scatter_plt(rec)
+    print("sactter plot done")
+
+
+    # 5. Encode the data
+    rec = encode(rec) # returns rec with ordinal attrs
+    print("encode done")
+
+    #6. plot the correlation matrix for ordinal data
+    ord_corr_mat = corr_mat_ord(rec)
+    print("ordinal heatmap plotted")
+    # 7. get the three copies for the categorical dataframe
+    df_chi, df_pVal, df_cramer  = cat_df(rec1) # sending unaltered dataframe
+    print("data frames prepared")
+    #8. graphing the 3 heatmaps
+    corr_mat_cat(rec, df_chi, df_pVal, df_cramer)
+    print("categorical heatmap plotted")
+
+
+
+
+
+
+
 
 
 
