@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Gallery with Modal</title>
+    <title>Image Gallery with Modal and Zoom</title>
     <style>
         /* Define your CSS styles for the grid layout here */
         .image-grid {
@@ -20,6 +20,7 @@
             width: 100%;
             max-width: 100%;
             height: auto;
+            cursor: pointer; /* Add cursor pointer to indicate it's clickable */
         }
 
         /* Modal dialog styles */
@@ -40,6 +41,7 @@
             margin: auto;
             max-width: 80%;
             max-height: 80%;
+            position: relative;
         }
 
         .close {
@@ -50,51 +52,96 @@
             color: #fff;
             cursor: pointer;
         }
+
+        /* Define CSS for the zoom overlay */
+        .zoom-overlay {
+            position: absolute;
+            border: 2px dashed red; /* Adjust the border style as needed */
+            pointer-events: none; /* Prevent overlay from blocking clicks on the image */
+        }
     </style>
 </head>
 <body>
-    <div class="image-grid">
-        {% for image_url in image_urls %}
-        <div class="image-container">
-            <img class="image" src="{{ image_url }}" alt="Image">
-        </div>
-        {% endfor %}
+   <div class="image-grid">
+    {% for image_url in image_urls %}
+    <div class="image-container">
+        <img class="image" src="{{ image_url }}" alt="Image">
     </div>
+    {% endfor %}
+</div>
 
     <!-- Modal dialog container -->
     <div id="imageModal" class="modal">
         <span class="close" id="closeModal">&times;</span>
-        <img class="modal-content" id="modalImage">
+        <div class="modal-content">
+            <div id="zoomContainer">
+                <img id="modalImage" src="" alt="Zoomed Image">
+                <div id="zoomOverlay" class="zoom-overlay"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // JavaScript for handling click events and zooming in
         const imageContainers = document.querySelectorAll('.image-container');
         const modal = document.getElementById('imageModal');
         const modalImage = document.getElementById('modalImage');
         const closeModal = document.getElementById('closeModal');
+        const zoomContainer = document.getElementById('zoomContainer');
+        const zoomOverlay = document.getElementById('zoomOverlay');
 
         imageContainers.forEach(container => {
             container.addEventListener('click', () => {
-                // Get the clicked image source and display it in the modal
-                const clickedImageSrc = container.querySelector('.image').src;
-                modalImage.src = clickedImageSrc;
+                const clickedImage = container.querySelector('.image');
+                modalImage.src = clickedImage.src;
+
+                // Reset zoom overlay position and size
+                zoomOverlay.style.left = '0';
+                zoomOverlay.style.top = '0';
+                zoomOverlay.style.width = '0';
+                zoomOverlay.style.height = '0';
 
                 // Open the modal
                 modal.style.display = 'block';
             });
         });
 
-        // Close the modal when the close button is clicked
         closeModal.addEventListener('click', () => {
             modal.style.display = 'none';
         });
 
-        // Close the modal when clicking outside the modal content
         window.addEventListener('click', (event) => {
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
+        });
+
+        // Handle zooming
+        let isZooming = false;
+        let startOffsetX, startOffsetY;
+
+        zoomOverlay.addEventListener('mousedown', (e) => {
+            isZooming = true;
+            startOffsetX = e.clientX - zoomOverlay.getBoundingClientRect().left;
+            startOffsetY = e.clientY - zoomOverlay.getBoundingClientRect().top;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isZooming) {
+                const offsetX = e.clientX - zoomOverlay.getBoundingClientRect().left;
+                const offsetY = e.clientY - zoomOverlay.getBoundingClientRect().top;
+
+                const width = offsetX - startOffsetX;
+                const height = offsetY - startOffsetY;
+
+                zoomOverlay.style.left = startOffsetX + 'px';
+                zoomOverlay.style.top = startOffsetY + 'px';
+                zoomOverlay.style.width = width + 'px';
+                zoomOverlay.style.height = height + 'px';
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isZooming = false;
         });
     </script>
 </body>
