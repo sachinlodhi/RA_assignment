@@ -106,6 +106,6 @@ def visualize():
     return render_template("links.html")
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 # main()
