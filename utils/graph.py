@@ -38,9 +38,9 @@ def freq_graph(rec):
         plt.xticks(rotation=45)
         plt.grid(axis='y')
         # plt.show()  # Show the plot
-        plt.savefig(save_dir+'/frequency_graphs/' +i+".png")
+        plt.savefig(save_dir+'/frequency_graphs/' +i+".svg",format='svg', dpi=1200)
     # print("Freq distr saved")
-    freq_lis = glob.glob(save_dir+"/frequency_graphs/" + "*.png")
+    freq_lis = glob.glob(save_dir+"/frequency_graphs/" + "*.svg")
     return freq_lis # lists of the images
 
 def scatter_plt(rec):
@@ -67,8 +67,8 @@ def scatter_plt(rec):
         plt.xticks(rotation=45)  # Rotate x-axis labels if needed
         # Append the current plot to the list of scatter plots
         scatter_plots.append(plt)
-        plt.savefig(save_dir + '/scatter_graphs/' + attribute + ".png")
-    scatter_lis = glob.glob(save_dir + "/scatter_graph/" + "*.png")
+        plt.savefig(save_dir + '/scatter_graphs/' + attribute + ".svg",format='svg', dpi=1200)
+    scatter_lis = glob.glob(save_dir + "/scatter_graph/" + "*.svg")
     return scatter_lis
 
 
@@ -81,12 +81,12 @@ def corr_mat_ord(rec):
         pass
 
     # Create a heatmap of the correlation matrix
-    plt.figure(figsize=(30, 40))
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=.5)
+    plt.figure(figsize=(30, 30))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=.5,)
     plt.title("Correlation Matrix Heatmap(ORDINAL CONSIDERATION OF ATTRIBUTES)")
-    plt.savefig(save_dir + "/heatmaps/" + "ordinal.png")
+    plt.savefig(save_dir + "/heatmaps/" + "ordinal.svg",format='svg', dpi=1200)
     # plt.show()
-    ord_heatmap = glob.glob(save_dir + "/heatmaps/" + "ordinal.png")
+    ord_heatmap = glob.glob(save_dir + "/heatmaps/" + "ordinal.svg")
     return ord_heatmap
 
 #8. function to draw graph with the consideration of the data as categorical
@@ -110,8 +110,8 @@ def corr_mat_cat(rec, df_chi, df_pVal, df_cramer):
                     yticklabels=attribute_labels)
 
         plt.title(f'{i} value correlation matrix')
-        plt.savefig(save_dir + "/heatmaps/" + str(i) +".png")
-        cat_heatmap.append(save_dir + "/heatmaps/" + str(i) +".png")
+        plt.savefig(save_dir + "/heatmaps/" + str(i) +".svg", format='svg', dpi=1200)
+        cat_heatmap.append(save_dir + "/heatmaps/" + str(i) +".svg")
         # plt.show()
     return cat_heatmap
 

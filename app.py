@@ -1,5 +1,4 @@
 import glob
-
 from flask import Flask, render_template, request,flash, redirect, url_for,send_from_directory, session, send_file
 from werkzeug.utils import secure_filename
 from utils import utility
@@ -66,7 +65,7 @@ def show_file_content():
     return render_template('file_content.html', content=col_list)
 
 # function for downloading the mapped file(if user press download mapped file button)
-@app.route("/download_mapping",methods=['POST'])
+@app.route('/download_mapping',methods=['POST'])
 def download_file():
     file_path = session.get('file_path')
     _, file_extension = os.path.splitext(file_path)
@@ -81,29 +80,22 @@ def download_file():
 def show_graphs():
     graph_lis = []
     if request.url.endswith('/freqDstr'):
-        graph_lis = glob.glob("static/graphs/frequency_graphs/*.png")
+        graph_lis = glob.glob("static/graphs/frequency_graphs/*.svg")
 
     elif request.url.endswith('/scatterPlt'):
-        graph_lis = glob.glob("static/graphs/scatter_graphs/*.png")
+        graph_lis = glob.glob("static/graphs/scatter_graphs/*.svg")
 
     elif request.url.endswith('/ordCorrHM'):
-        graph_lis = glob.glob("static/graphs/heatmaps/ordinal.png")
+        graph_lis = glob.glob("static/graphs/heatmaps/ordinal.svg")
 
     elif request.url.endswith('/catCorrHM'):
-        graph_lis = glob.glob("static/graphs/heatmaps/*.png")
+        graph_lis = glob.glob("static/graphs/heatmaps/*.svg")
         graph_lis = [i for i in graph_lis if "ordinal" not in i]
     return render_template("display_graphs.html",image_urls = graph_lis)
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
-
 @app.route('/start_visualizing', methods=['POST'])
 def visualize():
-    print(f"Session path visualizartion : {session.get('file_path')}")
+    print(f"Session path visualization : {session.get('file_path')}")
     # image_urls = utility.grap/s(session.get("file_path"))
     ###### START HERE
 
@@ -112,3 +104,8 @@ def visualize():
     t1.start()
 
     return render_template("links.html")
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+
+# main()

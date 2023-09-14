@@ -1,21 +1,13 @@
-import pandas as pd
+
 import re
 import  os
 import random
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import OrdinalEncoder
-import warnings
-import math
-import shutil
-import glob
+
 from .cleaner import clean
 from .transform import cat_df, fix_missing, encode, impute
 from .graph import corr_mat_cat, corr_mat_ord, scatter_plt, freq_graph
-
+import warnings
 warnings.filterwarnings('ignore')
 
 read_func ={
@@ -109,6 +101,7 @@ def begin(filename):
     df_chi, df_pVal, df_cramer  = cat_df(rec1) # sending unaltered dataframe
     print("data frames prepared")
     #8. graphing the 3 heatmaps
+    rec = read_func[filename[-4:]](filename)  # read the file according to its extension
     corr_mat_cat(rec, df_chi, df_pVal, df_cramer)
     print("categorical heatmap plotted")
 

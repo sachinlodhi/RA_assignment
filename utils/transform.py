@@ -18,7 +18,7 @@ def impute(rec, attr, val_to_handle):
     temp_df = temp_df[temp_df[attr] != '']
     dstrbn = temp_df.groupby('Grade')[attr].value_counts().unstack().fillna(0)
 
-    dstrbn.to_csv("lol.csv")
+
     # finding most frequent values for each grade(storing in dictionary) from Parent level edu attr
     most_fr_vals = {}
     # Iterate through unique values in the "Grade" column
