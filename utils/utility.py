@@ -108,7 +108,7 @@ def begin(filename):
 
 
 
-
+# begin("stu_data.csv")
 
 
 

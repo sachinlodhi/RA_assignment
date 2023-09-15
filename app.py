@@ -4,7 +4,9 @@ from werkzeug.utils import secure_filename
 from utils import utility
 import os
 import threading
+from flask_ngrok import run_with_ngrok
 app = Flask(__name__)
+run_with_ngrok(app)
 app.debug = True
 app.secret_key = "testing key"
 # Directory to store the uploaded files
@@ -100,12 +102,13 @@ def visualize():
     ###### START HERE
 
     # call utility.begin() to begin
-    t1 = threading.Thread(target=utility.begin, args=(session.get("file_path"),), daemon=True)
+    t1 = threading.Thread(target=utility.begin, args=(session.get("file_path"),), daemon=False)
     t1.start()
+    # utility.begin(session.get("file_path"))
 
     return render_template("links.html")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(app.run(port=5000))
 
 # main()

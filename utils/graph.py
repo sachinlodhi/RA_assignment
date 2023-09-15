@@ -84,7 +84,7 @@ def corr_mat_ord(rec):
     plt.figure(figsize=(30, 30))
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=.5,)
     plt.title("Correlation Matrix Heatmap(ORDINAL CONSIDERATION OF ATTRIBUTES)")
-    plt.savefig(save_dir + "/heatmaps/" + "ordinal.svg",format='svg', dpi=1200)
+    plt.savefig(save_dir + "/heatmaps/" + "ordinal.svg",format='svg', dpi=600)
     # plt.show()
     ord_heatmap = glob.glob(save_dir + "/heatmaps/" + "ordinal.svg")
     return ord_heatmap
@@ -110,7 +110,7 @@ def corr_mat_cat(rec, df_chi, df_pVal, df_cramer):
                     yticklabels=attribute_labels)
 
         plt.title(f'{i} value correlation matrix')
-        plt.savefig(save_dir + "/heatmaps/" + str(i) +".svg", format='svg', dpi=1200)
+        plt.savefig(save_dir + "/heatmaps/" + str(i) +".svg", format='svg', dpi=600)
         cat_heatmap.append(save_dir + "/heatmaps/" + str(i) +".svg")
         # plt.show()
     return cat_heatmap
