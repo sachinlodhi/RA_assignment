@@ -22,6 +22,12 @@ try:
 except:
     pass
 
+read_func ={
+    ".csv" : pd.read_csv,
+    ".xls" : pd.read_excel,
+    "xlsx" : pd.read_excel,
+}
+
 #extension validation for the uploaded file
 ALLOWED_EXTENSIONS = {'xls', 'csv', "xlsx"}
 def allowed_file(filename):
@@ -58,6 +64,7 @@ def upload_file():
             col_lis = utility.load_file("./"+UPLOAD_DIR+"/"+filename)
             session["col_list"] = col_lis # storing data in session variable
             session["file_path"] = "./"+UPLOAD_DIR+"/"+filename
+            df = read_func[filename[-4:]](filename)
             # print(type(col_lis))
             # print(col_lis)
             return redirect(url_for("show_file_content"))
