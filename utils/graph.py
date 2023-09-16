@@ -11,12 +11,12 @@ import os
 import math
 import glob
 
-save_dir = "static/graphs"
+save_dir = "static/graphs/"
 
 # plotting the graphs
 def freq_graph(rec):
     try:
-        os.makedirs("static/graphs/"+"frequency_graphs")
+        os.makedirs(save_dir+"frequency_graphs")
     except:
         pass
 
@@ -47,7 +47,7 @@ def scatter_plt(rec):
     # # scatter plot
     # Create a list to store the scatter plots
     try:
-        os.makedirs("static/graphs/" + "scatter_graphs")
+        os.makedirs(save_dir + "scatter_graphs")
     except:
         pass
     scatter_plots = []
@@ -76,7 +76,7 @@ def scatter_plt(rec):
 def corr_mat_ord(rec):
     correlation_matrix = rec.corr()
     try:
-     os.makedirs("static/graphs/" + "heatmaps")
+     os.makedirs(save_dir + "heatmaps")
     except:
         pass
 
@@ -116,3 +116,30 @@ def corr_mat_cat(rec, df_chi, df_pVal, df_cramer):
     return cat_heatmap
 
 
+def plot_intensity( title, df):
+    try:
+        os.makedirs(save_dir + "impact")
+    except:
+        pass
+
+    x = df[0][1:].tolist()  # extracting the attrs name
+    y = df[5][1:].tolist() # extracting the value in Grade column
+    x_fin = []
+    y_fin = []
+    for i in range(len(y)):
+        if pd.isna(y[i]):
+            continue
+        x_fin.append(x[i])
+        y_fin.append(y[i])
+    x,y = x_fin, y_fin
+    sorted_data = sorted(zip(x, y), key=lambda pair: pair[1])
+    sorted_x, sorted_y = zip(*sorted_data)
+    fig, ax = plt.subplots(figsize=(16, 12))
+    ax.plot(sorted_x, sorted_y, marker='o', linestyle='-')
+    plt.xticks(rotation=90)
+    # ax.set_xlabel(attrs)
+    ax.set_ylabel("Magnitude")
+    ax.set_title(f"Trend of Corelation of Grade with other Attributes in terms of {title}" )
+    plt.grid(True)
+    plt.savefig(save_dir + "/impact/" + str(title) + ".svg", format='svg', dpi=50)
+    # plt.show()

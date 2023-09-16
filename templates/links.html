@@ -3,47 +3,112 @@
 <head>
     <title>Centered Links</title>
     <style>
-        /* Center the list vertically and horizontally */
-        .centered-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh; /* 100% viewport height for full screen */
-        }
+body {
+  background-color: #c4c5c7;
+  padding: 2rem;
+}
+ol, ol > li {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+ol {
+  width: min(400px, 100% - 2rem);
+  margin-inline: auto;
+  list-style: none;
+  display: grid;
+  font-family: system-ui, sans-serif;
+  color: white;
+  counter-reset: liCount;
+}
+ol:not(.alternate){
+  gap: 0.5rem;
+}
+ol > li {
+  --number-size: 3rem;
+  --padding-inline: 2.5rem;
+  --padding-block: 0.5rem;
+  margin-block: var(--padding-block);
+  padding: var(--padding-block) var(--padding-inline);
+  background-color: var(--accent-color);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-auto-flow: dense;
+  align-items: center;
+  gap: calc(1rem + var(--padding-block));
+  border-radius: 100vmax;
+  box-shadow:
+    inset 0.15rem 0.15rem hsl(0 0% 0% / .125),
+    inset 0.5rem 0.5rem 1rem hsl(0 0% 0% / .5),
+    inset -0.15rem -0.15rem hsl(0 0% 100% / .75);
+  position: relative;
+  isolation: isolate;
+  counter-increment: liCount;
+}
+ol > li::before {
+  content: counter(liCount);
+  font-size: calc(var(--number-size) / 2);
+  color: var(--accent-color);
+  width: var(--number-size);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 100vmax;
+  background-color: #e6e7e9;
+  box-shadow:
+    inset 0.05rem 0.05rem hsl(0 0% 100% / .75),
+    0.25rem 0.25rem 0.5rem hsl(0 0% 0% / .5),
+    inset -0.05rem -0.05rem hsl(0 0% 0% / .125);
+}
+a {
+    text-decoration: none;
+}
+ol > li::after{
+  content: "";
+  position: absolute;
+  z-index: -1;
+  --size: calc(var(--number-size) + var(--padding-block) * 4);
+  width: var(--size);
+  aspect-ratio: 1;
+  inset-block-start: calc(var(--padding-block) * -1);
+  --inset-inline: calc(var(--padding-inline) - var(--padding-block) * 2);
+  inset-inline: var(--inset-inline) auto;
+  border-radius: 100vmax;
+  background-color: hsl(0 0% 100% / .125);
+  background-image:
+    radial-gradient(circle at calc(50% + 1px) calc(50% + 1px), transparent 67.7%, hsl(0 0% 100% / .5) calc(67.7% + 1px)),
+    radial-gradient(circle at top left, hsl(0 0% 100% / .1) 50%, transparent calc(50% + 1px));
+  --backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: var(--backdrop-filter);
+  backdrop-filter: var(--backdrop-filter);
+  box-shadow: 0.25rem 0.25rem 0.5rem hsl(0 0% 0% / 0.125);
+}
 
-        /* Style for the links */
-        .centered-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .centered-list li {
-            margin: 20px 0; /* Adjust the spacing between links */
-        }
-
-        .centered-list li a {
-            text-decoration: none;
-            color: #333; /* Text color for links */
-            font-size: 24px; /* Font size for links */
-        }
-
-        /* Change link color on hover */
-        .centered-list li a:hover {
-            color: #555; /* Text color on hover */
-        }
+ol.alternate > li:nth-child(even),
+ol.right > li{
+  grid-template-columns: 1fr auto;
+}
+ol.alternate > li:nth-child(even)::before,
+ol.right > li::before{
+  grid-column: 2;
+}
+ol.alternate > li:nth-child(even)::after,
+ol.right > li::after{
+  inset-inline: auto var(--inset-inline);
+}
     </style>
 </head>
 <body>
-<h3>Wait at least one minute before clicking on any link!!!</h3>
-    <div class="centered-list">
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/freqDstr">Frequency Distribution</a></li>
-            <li><a href="/scatterPlt">Scatter Plot</a></li>
-            <li><a href="/ordCorrHM">Correlation Heatmap(Ordinal)</a></li>
-            <li><a href="/catCorrHM">Correaltion Heatmap(Categorical)</a></li>
-        </ul>
-    </div>
+
+<ol class="alternate"> <!--[left]/alternate/right-->
+  <li style="--accent-color: #f0a821"><a href="/">Home</a></li>
+  <li style="--accent-color: #eb7326"><a href="/freqDstr">Frequency Distribution</a></li>
+  <li style="--accent-color: #bb368f"><a href="/scatterPlt">Scatter Plot</a></li>
+  <li style="--accent-color: #6b4495"><a href="/ordCorrHM">Correlation Heatmap(Ordinal)</a></li>
+  <li style="--accent-color: #229ab5"><a href="/catCorrHM">Correlation Heatmap(Categorical)</a></li>
+    <li style="--accent-color: #58a019"><a href="/impactTrend">Impact trend[Chi-Value and Cramer's Value Analysis]</a></li>
+</ol>
+
 </body>
 </html>
+

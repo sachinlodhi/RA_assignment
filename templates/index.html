@@ -1,0 +1,79 @@
+{#<!DOCTYPE html>#}
+{#<html>#}
+{#<head>#}
+{#    <title>Server Logs</title>#}
+{#</head>#}
+{#<body>#}
+{#    <h1>Server Logs</h1>#}
+{#    <ul id="log-list"></ul>#}
+{##}
+{#    <script>#}
+{#        const logList = document.getElementById('log-list');#}
+{##}
+{#        // Function to append log messages to the list#}
+{#        function appendLog(message) {#}
+{#            const li = document.createElement('li');#}
+{#            li.textContent = message;#}
+{#            logList.appendChild(li);#}
+{#        }#}
+{##}
+{#        // EventSource to listen for log updates from the server#}
+{#        const eventSource = new EventSource('/ls');#}
+{##}
+{#        eventSource.onmessage = function (event) {#}
+{#            const logMessage = event.data;#}
+{#            appendLog(logMessage);#}
+{#        };#}
+{#    </script>#}
+{#</body>#}
+{#</html>#}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DataFrame Display</title>
+</head>
+<body>
+    <h1>Sample DataFrame</h1>
+    <table>
+        <thead>
+            <tr>
+                {% for column in dataframe.columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in dataframe.iterrows() %}
+                <tr>
+                    {% for value in row[1] %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
+
+
+
+{#<!DOCTYPE html>#}
+{#<html>#}
+{#<head>#}
+{#    <title>DataFrame Info</title>#}
+{#</head>#}
+{#<body>#}
+{#    <h1>DataFrame Info</h1>#}
+{#    <table>#}
+{#        <tr>#}
+{#            <td>Info</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td>{{ info_html|safe }}</td>#}
+{#        </tr>#}
+{#    </table>#}
+{#</body>#}
+{#</html>#}

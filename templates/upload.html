@@ -7,53 +7,95 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             text-align: center;
+            background-color: #c4c5c7;
+  padding: 2rem;
         }
+
         .container {
+            margin: 100px auto;
             max-width: 400px;
-            margin: 0 auto;
             padding: 20px;
-            background-color: #fff;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: #f9f9f9;
         }
-        h1 {
-            color: #333;
-        }
-        input[type="file"] {
+        #file-input {
             display: none;
         }
         label {
             display: block;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            text-align: center;
             cursor: pointer;
-            border-radius: 5px;
-        }
-        input[type="file"] + label {
-            margin-top: 10px;
-        }
-        input[type="submit"] {
-            background-color: #2ecc71;
+            background-color: #007BFF;
             color: #fff;
             padding: 10px 20px;
-            border: none;
             border-radius: 5px;
+            margin-top: 10px;
+        }
+        label:hover {
+            background-color: #0056b3;
+        }
+        #upload-button {
+            display: none;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
             cursor: pointer;
+        }
+        #upload-button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Upload a File</h1>
+
+        <h2>Upload XLS or CSV File</h2>
+        <p>Choose a file to upload:</p>
         <form method="POST" action="/upload" enctype="multipart/form-data">
-            <input type="file" name="file" id="file" style="display:none;">
-            <label for="file">Choose File</label>
-            <input type="submit" value="Upload">
+        <label for="file-input">Select File</label>
+        <input name = "file" type="file" id="file-input" accept=".xls, .xlsx, .csv">
+        <p id="file-name"></p>
+        <p class="error-message" id="error-message"></p>
+{#        <button id="upload-button">Upload</button>#}
+            <input type="submit" id = "upload-button" value="Upload">
         </form>
     </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const errorMessage = document.getElementById('error-message');
+        const uploadButton = document.getElementById('upload-button');
+
+        fileInput.addEventListener('change', function() {
+            const selectedFile = fileInput.files[0];
+            if (selectedFile) {
+                const fileName = selectedFile.name;
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                if (fileExtension === 'xls' || fileExtension === 'xlsx' || fileExtension === 'csv') {
+                    fileNameDisplay.textContent = `Selected File: ${fileName}`;
+                    errorMessage.textContent = '';
+                    uploadButton.style.display = 'block'; // Show the upload button
+                } else {
+                    fileNameDisplay.textContent = '';
+                    errorMessage.textContent = 'Error: Unsupported file type. Please select an XLS, XLSX, or CSV file.';
+                    uploadButton.style.display = 'none'; // Hide the upload button
+                    fileInput.value = ''; // Clear the file input
+                }
+            } else {
+                fileNameDisplay.textContent = '';
+                errorMessage.textContent = '';
+                uploadButton.style.display = 'none'; // Hide the upload button
+            }
+        });
+    </script>
 </body>
 </html>

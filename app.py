@@ -1,9 +1,10 @@
 import glob
-from flask import Flask, render_template, request,flash, redirect, url_for,send_from_directory, session, send_file
+from flask import Flask, render_template, request, render_template, Response,flash, redirect, url_for,send_from_directory, session, send_file
 from werkzeug.utils import secure_filename
 from utils import utility
 import os
 import threading
+import pandas as pd
 app = Flask(__name__)
 app.debug = True
 app.secret_key = "testing key"
@@ -14,6 +15,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
 # If directory does not exists make one
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
+
+try:
+    with open("status.txt", "r+") as file:
+        file.truncate(0)
+except:
+    pass
 
 #extension validation for the uploaded file
 ALLOWED_EXTENSIONS = {'xls', 'csv'}
@@ -28,8 +35,10 @@ def index():
 
 
 # file upload page and validation
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST', 'GET'])
 def upload_file():
+
+    print("in upload")
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -56,14 +65,24 @@ def upload_file():
     return render_template('upload.html')
 
 # function for the displaying columns name
+df = pd.DataFrame()
 @app.route('/extracted_data')
 def show_file_content():
+    global df
     col_list = session.get('col_list', [])# extracting the data from session variable
     print(f"stored path is : {session.get('file_path')}")
     # start mapping
+    df = pd.read_csv(session.get("file_path"))
+    # df_info = df.info()
+    # print(df_info)
     utility.mapping(session.get('file_path'))
     return render_template('file_content.html', content=col_list)
 
+# to show full table
+@app.route("/view_table", methods = ["GET", "POST"])
+def show_table():
+    global df
+    return render_template("index.html", dataframe = df)
 # function for downloading the mapped file(if user press download mapped file button)
 @app.route('/download_mapping',methods=['POST'])
 def download_file():
@@ -77,6 +96,7 @@ def download_file():
 @app.route("/scatterPlt")
 @app.route("/ordCorrHM")
 @app.route("/catCorrHM")
+@app.route("/impactTrend")
 def show_graphs():
     graph_lis = []
     if request.url.endswith('/freqDstr'):
@@ -85,7 +105,11 @@ def show_graphs():
     elif request.url.endswith('/scatterPlt'):
         graph_lis = glob.glob("static/graphs/scatter_graphs/*.svg")
 
+    elif request.url.endswith('/impactTrend'):
+        graph_lis = glob.glob("static/graphs/impact/*.svg")
+
     elif request.url.endswith('/ordCorrHM'):
+
         graph_lis = glob.glob("static/graphs/heatmaps/ordinal.svg")
 
     elif request.url.endswith('/catCorrHM'):
@@ -93,20 +117,29 @@ def show_graphs():
         graph_lis = [i for i in graph_lis if "ordinal" not in i]
     return render_template("display_graphs.html",image_urls = graph_lis)
 
-@app.route('/start_visualizing', methods=['POST'])
+
+@app.route('/start_visualizing', methods=['POST', "GET"])
 def visualize():
-    print(f"Session path visualization : {session.get('file_path')}")
-    # image_urls = utility.grap/s(session.get("file_path"))
-    ###### START HERE
-
-    # call utility.begin() to begin
-    t1 = threading.Thread(target=utility.begin, args=(session.get("file_path"),), daemon=False)
+    t1 = threading.Thread(target=utility.begin, args=(session.get("file_path"),), daemon=True  )
     t1.start()
-    # utility.begin(session.get("file_path"))
+    # return render_template('links.html')
+    # print(f"Session path visualization : {session.get('file_path')}")
+    return render_template("loading.html")
+@app.route("/check_process_status")
+def check_status():
+    print("Checking statusssss")
+    with open('status.txt', 'r+') as file:
+        status = file.read()
+        print("Status is", status)
+        if status:
+            file.truncate(0)
+    return status
 
+@app.route("/results")
+def result():
     return render_template("links.html")
-
 if __name__ == '__main__':
     app.run()
 
 # main()
+
