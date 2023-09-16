@@ -38,12 +38,12 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     return render_template('upload.html')
-
+df = pd.DataFrame()
 
 # file upload page and validation
 @app.route('/upload', methods=['POST', 'GET'])
 def upload_file():
-
+    global df
     print("in upload")
     if request.method == 'POST':
         # check if the post request has the file part
@@ -72,7 +72,7 @@ def upload_file():
     return render_template('upload.html')
 
 # function for the displaying columns name
-df = pd.DataFrame()
+
 @app.route('/extracted_data')
 def show_file_content():
     global df
