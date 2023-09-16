@@ -16,6 +16,7 @@ read_func ={
     "xlsx" : pd.read_excel,
 }
 
+
 def update_process_status(status):
     with open('./status.txt', 'w') as file:
         file.write(status)

@@ -95,7 +95,7 @@ def show_table():
 def download_file():
     file_path = session.get('file_path')
     _, file_extension = os.path.splitext(file_path)
-    file_path= _ +"_mapping" + file_extension
+    file_path= _ +"_mapping" + ".csv" # serving mapping only in csv irrespective of uploaded file
     print(file_path)
     return send_file(file_path, as_attachment=True, download_name="mapping"+file_extension)
 
