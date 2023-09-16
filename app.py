@@ -23,7 +23,7 @@ except:
     pass
 
 #extension validation for the uploaded file
-ALLOWED_EXTENSIONS = {'xls', 'csv'}
+ALLOWED_EXTENSIONS = {'xls', 'csv', "xlsx"}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -72,7 +72,7 @@ def show_file_content():
     col_list = session.get('col_list', [])# extracting the data from session variable
     print(f"stored path is : {session.get('file_path')}")
     # start mapping
-    df = pd.read_csv(session.get("file_path"))
+    # df = pd.read_csv(session.get("file_path"))
     # df_info = df.info()
     # print(df_info)
     utility.mapping(session.get('file_path'))

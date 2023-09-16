@@ -12,7 +12,8 @@ warnings.filterwarnings('ignore')
 
 read_func ={
     ".csv" : pd.read_csv,
-    ".xls" : pd.read_excel
+    ".xls" : pd.read_excel,
+    "xlsx" : pd.read_excel,
 }
 
 def update_process_status(status):
@@ -25,6 +26,7 @@ def update_process_status(status):
 # attributes exteractor
 def load_file(filename):
     global read_func
+    print(filename)
     df = read_func[filename[-4:]](filename)
     return df.columns.tolist()
 
