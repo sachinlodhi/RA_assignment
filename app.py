@@ -64,7 +64,7 @@ def upload_file():
             col_lis = utility.load_file("./"+UPLOAD_DIR+"/"+filename)
             session["col_list"] = col_lis # storing data in session variable
             session["file_path"] = "./"+UPLOAD_DIR+"/"+filename
-            df = read_func[filename[-4:]](filename)
+            df = read_func[filename[-4:]](session["file_path"])
             # print(type(col_lis))
             # print(col_lis)
             return redirect(url_for("show_file_content"))
